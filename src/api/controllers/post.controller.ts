@@ -11,8 +11,9 @@ export const createPost = async (req: Request, res: Response) => {
 };
 
 export const updatePost = async (req: Request, res: Response) => {
-  const { id, title, description } = req.body;
-  const post = await PostService.findByIdAndUpdate(id, { title, description, });
+  const { id } = req.params
+  const { title, description } = req.body;
+  const post = await PostService.findByIdAndUpdate(id, { title, description, }, { new: true });
   res.json({
     data: post,
   });

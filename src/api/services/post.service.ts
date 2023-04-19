@@ -34,7 +34,7 @@ class PostService {
     return PostModel.findOneAndUpdate(query, update, options);
   }
   async findByIdAndUpdate(
-    id: Pick<FilterQuery<PostDocument>, '_id'>,
+    id: string,
     update: UpdateQuery<PostDocument>,
     options?: QueryOptions
   ) {

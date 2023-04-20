@@ -1,6 +1,7 @@
-import { createClient } from 'redis'
+import { createClient } from 'redis';
 
-export const redisClient = createClient({
-  url: process.env.REDIS_DB_URL as string,
-})
+const redisClient = createClient();
+
+// eslint-disable-next-line no-console
+redisClient.on('error', (err) => console.error('Redis Client Error', err));
 export default redisClient;

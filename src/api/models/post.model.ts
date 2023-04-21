@@ -1,8 +1,9 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 
 export interface PostInput {
   title: string,
-  description: string
+  description: string,
+  author: string
 }
 
 export interface PostDocument extends PostInput, Document {
@@ -14,15 +15,21 @@ const PostSchema = new Schema({
   title: {
     type: String,
     required: [true, 'Post title is required'],
-    trim: true
+    trim: true,
   },
   description: {
     type: String,
     required: [true, 'Post description is required'],
     trim: true,
+  },
+  author: {
+    type: Types.ObjectId,
+    required: [true, 'Author is required'],
+    ref: 'author'
   }
 }, {
-  timestamps: true
+  timestamps: true,
+
 })
 
 

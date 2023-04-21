@@ -1,4 +1,4 @@
-import { FilterQuery, ProjectionFields, QueryOptions, UpdateQuery } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { PostDocument, PostInput, PostModel } from '../models';
 
 class PostService {
@@ -7,46 +7,50 @@ class PostService {
     return result;
   }
 
-  async findPost(
-    query: FilterQuery<PostDocument>,
-    projections: ProjectionFields<PostDocument> = {},
-    options: QueryOptions = { lean: true }
+  async findPostById(
+    id: Pick<FilterQuery<PostDocument>, '_id'>
   ) {
-    const result = await PostModel.findOne(query, projections, options);
+    const result = await PostModel.findById(id).populate('author');
     return result;
 
   }
-  async findPosts(
-    query: FilterQuery<PostDocument>,
-    projections: ProjectionFields<PostDocument> = {},
-    options: QueryOptions = { lean: true, }
-  ) {
+  async findPosts(limit: number, skip: number, search?: string,) {
 
-    const result = await PostModel.find(query, projections, options);
+    const result = await PostModel.aggregate([{
+      $match: {
+        ...(search && { $or: [{ title: { $regex: search, $options: 'i' } }, { description: { $regex: search, $options: 'i' } }] })
+      },
+    },
+    {
+      $lookup: {
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author',
+        from: 'authors'
+      }
+    },
+    {
+      $unwind: {
+        path: '$author',
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $skip: skip
+    }, {
+      $limit: limit
+    }]);
     return result;
   }
 
-  async findAndUpdatePost(
-    query: FilterQuery<PostDocument>,
-    update: UpdateQuery<PostDocument>,
-    options?: QueryOptions
+  async updatePostById(
+    id: Pick<FilterQuery<PostDocument>, '_id'>,
+    data: Partial<PostDocument>
   ) {
-    return PostModel.findOneAndUpdate(query, update, options);
-  }
-  async findByIdAndUpdate(
-    id: string,
-    update: UpdateQuery<PostDocument>,
-    options?: QueryOptions
-  ) {
-    return PostModel.findByIdAndUpdate(id, update, options);
+    return PostModel.findByIdAndUpdate(id, { $set: data }, { new: true });
   }
 
-  async deletePost(query: FilterQuery<PostDocument>) {
-    return PostModel.deleteOne(query);
-  }
-
-  async findAndDeletePostById(id: Pick<FilterQuery<PostDocument>, '_id'>,
-  ) {
+  async deletePostById(id: Pick<FilterQuery<PostDocument>, '_id'>) {
     return PostModel.findByIdAndDelete(id);
   }
 }

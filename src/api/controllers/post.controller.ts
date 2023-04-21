@@ -42,6 +42,6 @@ export const fetchPost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const post = await postService.findPostById({ _id: id });
   res.json({
-    post,
+    data: post,
   });
 };

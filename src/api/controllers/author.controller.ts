@@ -30,7 +30,6 @@ export const fetchAuthors = async (req: Request, res: Response) => {
   const { search = '', limit = 15, skip = 0 } = req.query
   const authors = await authorService.findAuthors(Number(limit), Number(skip), String(search));
   res.json({
-    fromCache: false,
     data: authors,
   });
 };
@@ -38,6 +37,6 @@ export const fetchAuthor = async (req: Request, res: Response) => {
   const { id } = req.params;
   const author = await authorService.findAuthorById({ _id: id });
   res.json({
-    author,
+    data: author,
   });
 };

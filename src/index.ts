@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(errorHandler)
 app.use('/api/posts/', postRoutes)
 app.use('/api/authors/', authorRoutes)
-app.get('/', (req: Request, res: Response) => res.send('Welcome to crud-api'))
+app.get('/', (req: Request, res: Response) => res.send('Welcome to crud--api...'))
 
 const PORT = process.env.PORT;
 connectMongo();

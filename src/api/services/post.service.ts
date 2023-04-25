@@ -45,7 +45,7 @@ class PostService {
 
   async updatePostById(
     id: Pick<FilterQuery<PostDocument>, '_id'>,
-    data: Partial<PostDocument>
+    data: Partial<FilterQuery<PostDocument>>
   ) {
     return PostModel.findByIdAndUpdate(id, { $set: data }, { new: true });
   }

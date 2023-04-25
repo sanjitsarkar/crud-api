@@ -1,31 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, param, validationResult } from 'express-validator';
-export const createPostValidationRules = [
-  body('title').isString(),
-  body('description').isString(),
-  body('author').isMongoId(),
-]
-export const updatePostValidationRules = [
-  param('id').isMongoId(),
-  body('title').isString(),
-  body('description').isString(),
-  body('author').isMongoId(),
-]
-export const fetchDeletePostValidationRules = [
-  param('id').isMongoId(),
-]
-export const createAuthorValidationRules = [
-  body('name').isString(),
-  body('username').isString(),
-]
-export const updateAuthorValidationRules = [
-  param('id').isMongoId(),
-  body('name').isString(),
-  body('username').isString(),
-]
-export const fetchDeleteAuthorValidationRules = [
-  param('id').isMongoId(),
-]
+import { check, validationResult } from 'express-validator';
 export const validate = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
 
@@ -33,7 +7,39 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
     return next()
   } else {
     return res.status(400).json({
-      errors: errors.array()
+      errors: errors.array().map((each => each.msg))
     })
   }
 }
+export const createPostValidationRules = [
+  check('title', 'title can\'t be empty').notEmpty(),
+  check('description', 'description can\'t be empty').notEmpty(),
+  check('author', 'author is invalid').isMongoId(),
+  validate
+]
+export const updatePostValidationRules = [
+  check('id', 'postId is invalid').isMongoId(),
+  check('title', 'title can\'t be empty').notEmpty(),
+  check('description', 'description can\'t be empty').notEmpty(),
+  check('author', 'author is invalid').isMongoId(),
+  validate
+]
+export const fetchDeletePostValidationRules = [
+  check('id', 'postId is invalid').isMongoId(),
+  validate
+]
+export const createAuthorValidationRules = [
+  check('name', 'name can\'t be empty').notEmpty(),
+  check('username', 'username can\'t be empty').notEmpty(),
+  validate
+]
+export const updateAuthorValidationRules = [
+  check('id', 'postId is invalid').isMongoId(),
+  check('name', 'name can\'t be empty').notEmpty(),
+  check('username', 'username can\'t be empty').notEmpty(),
+  validate
+]
+export const fetchDeleteAuthorValidationRules = [
+  check('id', 'postId is invalid').isMongoId(),
+  validate
+]
